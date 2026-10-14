@@ -1,0 +1,33 @@
+@startuml secuencia-proceso-clave
+title Transacción de Agendamiento Manual y Trazabilidad - SGEMD
+
+actor "Estudiante" as estudiante
+actor "Coordinadora (Admin)" as admin
+participant "Frontend (React)" as frontend
+participant "API Backend (Node.js)" as backend
+database "PostgreSQL (Expediente Central)" as db
+
+estudiante -> frontend: 1. Solicita asesoría (crea solicitud)
+frontend -> backend: 2. POST /advice (JWT validado)
+backend -> db: 3. Inserta asesoría (estado: pendiente)
+db --> backend: 4. Confirmación de registro
+backend --> frontend: 5. 201 Created
+frontend --> estudiante: 6. Muestra solicitud pendiente
+
+== Intervención Manual Administrativa ==
+
+admin -> frontend: 7. Revisa solicitudes pendientes y cruza horarios
+frontend -> backend: 8. PUT /advice/{id}/confirm
+backend -> db: 9. Inicia Transacción ACID
+db -> db: 10. Valida UNIQUE (fecha_horarios_id) para evitar cruces
+db --> backend: 11. Transacción Exitosa
+backend -> backend: 12. Genera Notificación In-App
+backend --> frontend: 13. 200 OK (Asesoría confirmada)
+frontend --> admin: 14. Confirmación visual
+
+== Notificación y Registro Histórico ==
+
+backend --> frontend: 15. WebSocket: Push Notificación In-App
+frontend --> estudiante: 16. Muestra alerta de cita confirmada
+backend -> db: 17. Ancla la sesión de asesoría al Emprendimiento (Expediente Central)
+@enduml

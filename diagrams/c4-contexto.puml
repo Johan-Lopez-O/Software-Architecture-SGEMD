@@ -1,0 +1,22 @@
+@startuml c4-contexto
+!include <C4/C4_Context>
+
+title Diagrama de Contexto (Nivel 1) - SGEMD
+
+Person(estudiante, "Estudiante (Emprendedor)", "Diligencia caracterización, sube actas y completa tareas del plan de trabajo.")
+Person(docente, "Docente (Mentor)", "Registra seguimientos, revisa evidencias y asesora proyectos asignados.")
+Person(admin, "Administrador (Coordinadora)", "Gestiona el sistema, aprueba perfiles, agenda citas manualmente y exporta respaldos.")
+
+System(sgemd, "SGEMD", "Sistema de Gestión de Emprendimiento Minuto de Dios. Centraliza la trazabilidad (Expediente Central), agendamiento y diagnósticos automáticos.")
+
+System_Ext(smtp, "Servidor SMTP (UNIMINUTO)", "Envía correos electrónicos con códigos OTP (8 dígitos) para verificación de cuentas.")
+System_Ext(file_system, "Sistema de Archivos Local", "Almacena las evidencias, PDFs y actas de confidencialidad (hasta 500 MB).")
+
+Rel(estudiante, sgemd, "Se registra, solicita asesorías y completa tareas usando")
+Rel(docente, sgemd, "Consulta historial y registra seguimiento usando")
+Rel(admin, sgemd, "Gestiona usuarios, empareja agendas y exporta métricas usando")
+
+Rel(sgemd, smtp, "Envía tokens de verificación OTP a")
+Rel(sgemd, file_system, "Lee/Escribe archivos adjuntos en")
+
+@enduml
